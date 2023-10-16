@@ -1,0 +1,205 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string ltrim(const string &);
+string rtrim(const string &);
+vector<string> split(const string &);
+
+/*
+ * Complete the 'queensAttack' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER n
+ *  2. INTEGER k
+ *  3. INTEGER r_q
+ *  4. INTEGER c_q
+ *  5. 2D_INTEGER_ARRAY obstacles
+ */
+
+int queensAttack(int n, int k, int r_q, int c_q, vector<vector<int>> obstacles) {
+    vector<vector<int>> block(8);
+    int count = 0;
+    
+    for (auto it: obstacles) {
+        if (it[0] < r_q && it[1] < c_q && (r_q - it[0] == c_q - it[1])) {
+            if (block[0].size() == 0 || block[0][0] < it[0]) {
+                block[0] = it;
+            }
+        }
+        // top
+        else if (it[0] < r_q && it[1] == c_q) {
+            if (block[1].size() == 0 || block[1][0] < it[0]) {
+                block[1] = it;    
+            }
+        }
+        else if (it[0] < r_q && it[1] > c_q && (r_q - it[0] == it[1] - c_q)) {
+            if (block[2].size() == 0 || block[2][0] < it[0]) {
+                block[2] = it;
+            }
+        }
+        // right
+        else if (it[0] == r_q && it[1] > c_q) {
+            if (block[3].size() == 0 || block[3][1] < it[1]) {
+                block[3] = it;
+            }
+        }
+        else if (it[0] > r_q && it[1] > c_q && (it[0] - r_q == it[1] - c_q)) {
+            if (block[4].size() == 0 || block[4][0] > it[0]) {
+                block[4] = it;
+            }
+        }
+        // bottom
+        else if (it[0] > r_q && it[1] == c_q) {
+            if (block[5].size() == 0 || block[5][1] > it[0]) {
+                block[5] = it;
+            }
+        }
+        else if (it[0] > r_q && it[1] < c_q && (it[0] - r_q == c_q - it[1]))  {
+            if (block[6].size() == 0 || block[6][0] > it[0]) {
+                block[6] = it;
+            }
+        }
+        // left
+        else if (it[0] == r_q && it[1] < c_q) {
+            if (block[7].size() == 0 || block[7][1] < it[1]) {
+                block[7] = it;
+            }
+        }
+    }
+    
+    vector<int> sub = block[0].size() == 0 ? vector<int>{0,0} : block[0];
+    int t = min(r_q - sub[0], c_q -  sub[1]) - 1;
+    count += t > 0 ? t : 0; 
+    cout << count << endl; 
+    
+    // top
+    sub = block[1].size() == 0 ? vector<int> {0,0} : block[1];
+    t = r_q - sub[0] - 1;
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    sub = block[2].size() == 0 ? vector<int> {0,n + 1} : block[2];
+    t = min(r_q - sub[0], sub[1] - c_q) - 1;
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    // right
+    sub = block[3].size() == 0 ? vector<int>{0, n + 1} : block[3];
+    t = (sub[1] - c_q) - 1;
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    sub = block[4].size() == 0 ? vector<int> {n + 1,n + 1} : block[4];
+    t = min(sub[0] - r_q, sub[1] - c_q) -1;
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    // bottom
+    sub = block[5].size() ==0 ? vector<int>{n + 1,n + 1} : block[5];
+    t = (sub[0] - r_q) - 1;
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    sub = block[6].size() == 0 ? vector<int> {n + 1, 0} : block[6];
+    t = min(sub[0] - r_q, c_q - sub[1]) - 1; 
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    // left
+    sub = block[7].size() == 0 ? vector<int> {0,0} : block[7];    
+    t = c_q - sub[1]- 1;
+    count += t > 0 ? t : 0;
+    cout << count << endl; 
+    
+    return count;
+
+}
+
+int main()
+{
+    ofstream fout(getenv("OUTPUT_PATH"));
+
+    string first_multiple_input_temp;
+    getline(cin, first_multiple_input_temp);
+
+    vector<string> first_multiple_input = split(rtrim(first_multiple_input_temp));
+
+    int n = stoi(first_multiple_input[0]);
+
+    int k = stoi(first_multiple_input[1]);
+
+    string second_multiple_input_temp;
+    getline(cin, second_multiple_input_temp);
+
+    vector<string> second_multiple_input = split(rtrim(second_multiple_input_temp));
+
+    int r_q = stoi(second_multiple_input[0]);
+
+    int c_q = stoi(second_multiple_input[1]);
+
+    vector<vector<int>> obstacles(k);
+
+    for (int i = 0; i < k; i++) {
+        obstacles[i].resize(2);
+
+        string obstacles_row_temp_temp;
+        getline(cin, obstacles_row_temp_temp);
+
+        vector<string> obstacles_row_temp = split(rtrim(obstacles_row_temp_temp));
+
+        for (int j = 0; j < 2; j++) {
+            int obstacles_row_item = stoi(obstacles_row_temp[j]);
+
+            obstacles[i][j] = obstacles_row_item;
+        }
+    }
+
+    int result = queensAttack(n, k, r_q, c_q, obstacles);
+
+    fout << result << "\n";
+
+    fout.close();
+
+    return 0;
+}
+
+string ltrim(const string &str) {
+    string s(str);
+
+    s.erase(
+        s.begin(),
+        find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace)))
+    );
+
+    return s;
+}
+
+string rtrim(const string &str) {
+    string s(str);
+
+    s.erase(
+        find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(),
+        s.end()
+    );
+
+    return s;
+}
+
+vector<string> split(const string &str) {
+    vector<string> tokens;
+
+    string::size_type start = 0;
+    string::size_type end = 0;
+
+    while ((end = str.find(" ", start)) != string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+
+        start = end + 1;
+    }
+
+    tokens.push_back(str.substr(start));
+
+    return tokens;
+}
